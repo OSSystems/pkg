@@ -31,15 +31,19 @@ package log
 import (
 	"io"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 )
 
 var (
 	logger *logrus.Entry
+	hook   *test.Hook
 )
 
 func init() {
 	logger = logrus.StandardLogger().WithFields(logrus.Fields{})
+
+	hook = test.NewGlobal()
 }
 
 // SetLogger overwrites the logger object. Mostly for tests.
@@ -155,4 +159,9 @@ func Panicf(format string, args ...interface{}) {
 // Fatalf logs a message at level Fatal on the standard logger.
 func Fatalf(format string, args ...interface{}) {
 	logger.Fatalf(format, args...)
+}
+
+// AllEntries returns all messages logged on the standard logger.
+func AllEntries() []*logrus.Entry {
+	return hook.AllEntries()
 }
